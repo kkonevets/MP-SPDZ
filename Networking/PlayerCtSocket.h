@@ -8,6 +8,7 @@
 
 #include "Player.h"
 #include "Tools/Lock.h"
+#include "Networking/MessageBuilder.h"
 
 #include <cryptoTools/Network/SocketAdapter.h>
 
@@ -38,6 +39,12 @@ class PlayerCtSocket : public osuCrypto::SocketInterface
             }
         }
     };
+
+    template <class T>
+    friend void serialize(const T&, uint8_t*);
+
+    template <class T>
+    friend T deserialize(uint8_t*);
 
     TwoPartyPlayer& P;
     WaitQueue<Pack> send_packs, receive_packs;

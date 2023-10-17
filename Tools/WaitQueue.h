@@ -6,9 +6,46 @@
 #ifndef TOOLS_WAITQUEUE_H_
 #define TOOLS_WAITQUEUE_H_
 
+#include "Networking/MessageBuilder.h"
+
 #include <pthread.h>
+#include <cstdint>
 #include <deque>
+
 using namespace std;
+
+template <class T>
+class NetworkDeqeue
+{
+    T mock_value;
+    NetworkDeqeue(const NetworkDeqeue& other);
+
+public:
+    NetworkDeqeue() {}
+    ~NetworkDeqeue() {}
+
+    void push_back(const T& val) {
+        uint8_t *buff = nullptr;
+        serialize(val, buff);
+        // send buf with ZeroMQ ...
+    }
+
+    T& front()
+    {
+        // get front msg from ZeroMQ
+        uint8_t *buf = nullptr;
+
+        mock_value = deserialize<T>(buf);
+        return mock_value;
+    }
+
+    size_t size() const
+    {
+        return 0;
+    }
+
+    void pop_front() {}
+};
 
 template<class T>
 class WaitQueue
@@ -16,7 +53,8 @@ class WaitQueue
     pthread_mutex_t mutex;
     pthread_cond_t cond;
 
-    deque<T> queue;
+    // deque<T> queue;
+    NetworkDeqeue<T> queue;
     bool running;
 
     // prevent copying
