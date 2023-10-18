@@ -1,9 +1,9 @@
 ROOT = .
 
-OPTIM= -O3
-#PROF = -pg
-#DEBUG = -DDEBUG
-GDEBUG = -g
+OPTIM= -O2
+PROF = -pg
+# DEBUG = -DDEBUG
+# GDEBUG = -g
 
 # set this to your preferred local storage directory
 PREP_DIR = '-DPREP_DIR="Player-Data/"'
@@ -64,7 +64,7 @@ endif
 USE_KOS = 0
 
 # allow to set compiler in CONFIG.mine
-CXX = clang++
+CXX = g++
 
 # use CONFIG.mine to overwrite DIR settings
 -include CONFIG.mine

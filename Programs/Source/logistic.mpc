@@ -1,0 +1,62 @@
+# vim:ft=python
+
+import torch
+import numpy as np
+
+from logistic import get_ordinary_data, get_model
+
+torch.manual_seed(0)
+
+X_train, X_test, y_train, y_test = get_ordinary_data()
+
+input_dim = X_train.shape[1]
+output_dim = len(np.unique(y_train))
+
+net = get_model(X_train, y_train)
+
+fh = X_train.shape[1]//2
+
+if "party0" in program.args:
+    a = sfix.input_tensor_via(0, X_train[:, :fh])
+    b = sfix.input_tensor_via(1, shape=X_train[:, fh:].shape)
+    X_train = a.concat_columns(b)
+    y_train = sint.input_tensor_via(0, y_train, one_hot=True)
+elif "party1" in program.args:
+    a = sfix.input_tensor_via(0, shape=X_train[:, :fh].shape)
+    b = sfix.input_tensor_via(1, X_train[:, fh:])
+    X_train = a.concat_columns(b)
+    y_train = sint.input_tensor_via(0, shape=[len(y_train), output_dim])
+
+if "party1" in program.args:
+    X_test = sfix.input_tensor_via(0, shape=X_test.shape)
+    y_test = sint.input_tensor_via(0, shape=[len(y_test), output_dim])
+else:
+    X_test = sfix.input_tensor_via(0, X_test)
+    y_test = sint.input_tensor_via(0, y_test, one_hot=True)
+
+from Compiler import ml
+
+ml.set_n_threads(4)
+batch_size = len(X_train)//5
+ml.Layer.back_batch_size = batch_size
+layers = ml.layers_from_torch(
+    net, data_input_shape=X_train.shape, batch_size=batch_size
+)
+optimizer = ml.SGD(layers)
+optimizer.set_learning_rate(0.01)
+optimizer.fit(
+    X_train,
+    y_train,
+    epochs=2, # int(program.args[2]),
+    batch_size=batch_size,
+    print_accuracy=True,
+    print_loss=True,
+    program=program,
+)
+
+print_ln("y_test = %s", y_test.reveal_list())
+print_ln("y_pred = %s", optimizer.eval(X_test, top=True).reveal())
+
+# ./compile_logistic.sh
+# ./run_logistic_party0.sh
+# ./run_logistic_party1.sh

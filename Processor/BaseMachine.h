@@ -44,6 +44,8 @@ public:
 
     ThreadQueues queues;
 
+    map<ThreadJobType, pair<size_t, double>> job_stat;
+
     vector<string> bc_filenames;
 
     vector<Program> progs;

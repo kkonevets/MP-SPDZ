@@ -1,0 +1,31 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-I./local/include",
+      "-march=native",
+      "-g",
+      "-Wextra",
+      "-Wall",
+      "-O0",
+      "-I.",
+      "-I./deps",
+      "-pthread",
+      "-DDEBUG",
+      "-DUSE_GF2N_LONG",
+      "-DPREP_DIR=\"Player-Data/\"",
+      "-DSSL_DIR=\"Player-Data/\"",
+      "-std=c++11",
+      "-Werror",
+      "-std=c++17",
+      "-fPIC",
+      "-c",
+      "-o",
+      "Networking/MessageBuilder.o",
+      "Networking/MessageBuilder.cpp"
+    ],
+    "directory": "/home/guyos/Documents/MP-SPDZ",
+    "file": "/home/guyos/Documents/MP-SPDZ/Networking/MessageBuilder.cpp",
+    "output": "/home/guyos/Documents/MP-SPDZ/Networking/MessageBuilder.o"
+  }
+]

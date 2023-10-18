@@ -1415,7 +1415,9 @@ void Program::execute(Processor<sint, sgf2n>& Proc) const
         }
 
 #if defined(COUNT_INSTRUCTIONS) and defined(TIME_INSTRUCTIONS)
-      Proc.stats[p[PC].get_opcode()] += timer.elapsed() * 1e9;
+      std::pair<size_t, size_t>& counts = Proc.stats[p[PC].get_opcode()];
+      counts.second += timer.elapsed() * 1e9;
+      counts.first += 1;
 #endif
     }
 }

@@ -9,7 +9,7 @@
 #include <map>
 using namespace std;
 
-class ExecutionStats : public map<int, size_t>
+class ExecutionStats : public map<int, std::pair<size_t, size_t>>
 {
 public:
     ExecutionStats& operator+=(const ExecutionStats& other);

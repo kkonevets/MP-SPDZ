@@ -210,6 +210,12 @@ Machine<sint, sgf2n>::~Machine()
   sint::bit_type::MAC_Check::teardown();
   sgf2n::MAC_Check::teardown();
 
+  for (auto p : job_stat) {
+      printf(
+          "%d\t%zu\t%f\t%f\n", p.first, p.second.first, p.second.second,
+          p.second.second / p.second.first);
+  }
+
   delete P;
   for (auto& queue : queues)
     delete queue;
@@ -459,7 +465,7 @@ void Machine<sint, sgf2n>::run(const string& progname)
   DataPositions& pos = res.first;
 
   finish_timer.stop();
-  
+
 #ifdef VERBOSE
   cerr << "Memory usage: ";
   tinfo[0].print_usage(cerr, Mp.MS, "sint");

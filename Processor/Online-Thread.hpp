@@ -19,6 +19,10 @@
 #include <iostream>
 #include <fstream>
 #include <pthread.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+
 using namespace std;
 
 
@@ -46,6 +50,9 @@ void thread_info<sint, sgf2n>::Sub_Main_Func()
   auto& opts = machine.opts;
   queues->next();
   ThreadQueue::thread_queue = queues;
+
+  pthread_mutex_t stat_mutex;
+
 
 #ifdef DEBUG_THREADS
   fprintf(stderr, "\tI am in thread %d\n",num);
@@ -106,7 +113,7 @@ void thread_info<sint, sgf2n>::Sub_Main_Func()
   P.reset_stats();
 
   bool flag=true;
-  int program=-3; 
+  int program=-3;
   // int exec=0;
 
   typedef typename sint::bit_type::part_type BT;
@@ -127,6 +134,8 @@ void thread_info<sint, sgf2n>::Sub_Main_Func()
     { // Wait until I have a program to run
       wait_timer.start();
       ThreadJob job = queues->next();
+      double elapsed_cur = thread_timer.elapsed();
+      cout<<"Job type: "<<job.type<<endl;
       program = job.prognum;
       wait_timer.stop();
 #ifdef DEBUG_THREADS
@@ -274,7 +283,7 @@ void thread_info<sint, sgf2n>::Sub_Main_Func()
           Proc.DataF.seekg(job.pos);
           // reset for actual usage
           Proc.DataF.reset_usage();
-             
+
           //printf("\tExecuting program");
           // Execute the program
           progs[program].execute(Proc);
@@ -301,7 +310,15 @@ void thread_info<sint, sgf2n>::Sub_Main_Func()
           wait_timer.start();
           queues->finished(job, P.total_comm());
 	 wait_timer.stop();
-       }  
+       }
+
+       pthread_mutex_lock(&stat_mutex);
+
+       auto& stat = machine.job_stat[job.type];
+       stat.first += 1;
+       stat.second += thread_timer.elapsed() - elapsed_cur;
+
+       pthread_mutex_unlock(&stat_mutex);
     }
 
   // final check
